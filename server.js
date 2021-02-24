@@ -65,7 +65,10 @@ var server = http.createServer(function (request, response) {
   } else {
     response.statusCode = 404;
     response.setHeader("Content-Type", "text/html;charset=utf-8");
-    response.write(`你确定没输错路径吧？反正你输入的路径我这边没有你要的东西，请回吧`);
+    response.write(`
+    你确定没输错路径吧？反正你输入的路径我这边没有你要的东西，请回吧 <br>
+    再加一句作业要求：你访问的页面不存在
+    `);
     response.end();
     console.log("有个傻子发请求过来啦！路径（带查询参数）为：" + pathWithQuery);
     console.log("method: " + method);
