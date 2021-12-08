@@ -20,63 +20,30 @@ var server = http.createServer(function (request, response) {
   var method = request.method;
 
   /******** 从这里开始看，上面不要看 ************/
-  if (path === "/") {
-    response.statusCode = 200;
-    response.setHeader("Content-Type", "text/html;charset=utf-8");
-    response.write(`
-    <!DOCTYPE html>
-    <head>
-    <link rel="stylesheet" href="/x">
-    </head>
-    <html><body>
-    <h1>测试哦，这是标题H1</h1>
-    <script src="/y"></script>
-    </body></html>
-    `);
-    response.end();
-    console.log("有个傻子发请求过来啦！路径（带查询参数）为：" + pathWithQuery);
-    console.log("method: " + method);
-    console.log("URL:" + pathWithQuery);
-    console.log("path:" + path);
-    console.log(query);
-    console.log(request.headers);
-  } else if (path === "/x") {
-    response.statusCode = 200;
-    response.setHeader("Content-Type", "text/css;charset=utf-8");
-    response.write(`body{color: red;}`);
-    response.end();
-    console.log("有个傻子发请求过来啦！路径（带查询参数）为：" + pathWithQuery);
-    console.log("method: " + method);
-    console.log("URL:" + pathWithQuery);
-    console.log("path:" + path);
-    console.log(query);
-    console.log(request.headers);
-  } else if (path === "/y") {
-    response.statusCode = 200;
-    response.setHeader("Content-Type", "text/javascript;charset=utf-8");
-    response.write(`console.log('你知道这是JS内容吗？')`);
-    response.end();
-    console.log("有个傻子发请求过来啦！路径（带查询参数）为：" + pathWithQuery);
-    console.log("method: " + method);
-    console.log("URL:" + pathWithQuery);
-    console.log("path:" + path);
-    console.log(query);
-    console.log(request.headers);
-  } else {
+
+  console.log("有个傻子发请求过来啦！路径（带查询参数）为：" + pathWithQuery);
+
+  response.statusCode = 200;
+  const filePath = path === "/" ? "/index.html" : path;
+  const index = filePath.lastIndexOf(".");
+  const suffix = filePath.substring(index);
+  const fileTypes = {
+    ".html": "text/html",
+    ".css": "text/css",
+    ".js": "text/javascript",
+    ".png":"image/png",
+    ".jpg":"image/jpeg"
+  };
+  response.setHeader("Content-Type", `${fileTypes[suffix] || 'text/html' };charset=utf-8`);
+  let Content;
+  try {
+    Content = fs.readFileSync(`./public${filePath}`);
+  } catch (error) {
+    Content = "这里没有你要的东西，请回吧";
     response.statusCode = 404;
-    response.setHeader("Content-Type", "text/html;charset=utf-8");
-    response.write(`
-    你确定没输错路径吧？反正你输入的路径我这边没有你要的东西，请回吧 <br>
-    再加一句作业要求：你访问的页面不存在
-    `);
-    response.end();
-    console.log("有个傻子发请求过来啦！路径（带查询参数）为：" + pathWithQuery);
-    console.log("method: " + method);
-    console.log("URL:" + pathWithQuery);
-    console.log("path:" + path);
-    console.log(query);
-    console.log(request.headers);
   }
+  response.write(Content);
+  response.end();
 
   /******** 代码结束，下面不要看 ************/
 });
